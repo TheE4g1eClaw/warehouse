@@ -25,7 +25,7 @@ public class Vehicle {
     Integer idVehicle;
     String model;
     String brand;
-    String year;
+    String vehicleYear;
     String color;
     String vin;
     
