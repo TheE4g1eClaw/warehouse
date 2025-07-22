@@ -47,9 +47,17 @@ public class VehicleController {
     }
 
     @PutMapping("/vehicle/{id}")
-    public ResponseEntity<String> updateVehicle(@PathVariable Integer id, @RequestBody Vehicle vehicle) {
+    public ResponseEntity<String> updateVehicle(@PathVariable Integer id, @RequestBody Vehicle   vehicle) {
         Vehicle updatedVehicle = vehicleService.updateVehicle(id, vehicle);
-        return (updatedVehicle == null) ? ResponseEntity.notFound().build() : ResponseEntity.ok("Vehicle updated successfully");
+        if (updatedVehicle == null) {
+            // Check if vehicle exists first
+            if (vehicleService.getVehicleById(id) == null) {
+                return ResponseEntity.notFound().build();
+            }
+            // If vehicle exists but update failed, it means workshop doesn't exist
+            return ResponseEntity.badRequest().body("Workshop doesn't exist");
+        }
+        return ResponseEntity.ok("Vehicle updated successfully");
     }
 
     @DeleteMapping("/vehicle/{id}")
