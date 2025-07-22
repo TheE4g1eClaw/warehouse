@@ -1,6 +1,5 @@
 package com.solera.warehouse.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 
 import com.solera.warehouse.model.Workshop;

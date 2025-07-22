@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.solera.warehouse.model.Workshop;
+import com.solera.warehouse.model.Vehicle;
 import com.solera.warehouse.repository.WorkshopRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +32,15 @@ public class WorkshopController {
     public String getWorkshopById(@PathVariable Integer id) {
         if (workshopRepository.existsById(id)) {
             Workshop workshop = workshopRepository.findById(id).get();
-            String message = "Workshop Name: " + workshop.getName() + ", Description: " + workshop.getDescrption();
+            String message = "Workshop Name: " + workshop.getName() + ", Description: " + workshop.getDescription();
+            message += "\nVehicles in Workshop: ";
+            if (workshop.getVehicles() != null && !workshop.getVehicles().isEmpty   ()) {
+                for (Vehicle vehicle : workshop.getVehicles()) {
+                    message += "\n- " + vehicle.getModel() + " (ID: " + vehicle.getIdVehicle() + ")";
+                }
+            } else {
+                message += "The workshop is empty.";
+            }
             return message;
         } else {
             return "Workshop not found";
@@ -44,7 +53,7 @@ public class WorkshopController {
         workshopRepository.findAll().forEach(workshop -> {
             message.append("ID: ").append(workshop.getIdWorkshop())
                    .append(", Name: ").append(workshop.getName())
-                   .append(", Description: ").append(workshop.getDescrption()).append("\n");
+                   .append(", Description: ").append(workshop.getDescription()).append("\n");
         });
         return message.toString();
     }

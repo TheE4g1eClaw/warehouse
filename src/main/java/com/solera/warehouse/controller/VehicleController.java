@@ -5,55 +5,53 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.solera.warehouse.model.Vehicle;
-import com.solera.warehouse.repository.VehicleRepository;
+import com.solera.warehouse.service.VehicleService;
 
 
 @RestController
 @RequestMapping("/v1")
 public class VehicleController {
-    private VehicleRepository vehicleRepository;
 
-    public VehicleController(VehicleRepository vehicleRepository) {
-        this.vehicleRepository = vehicleRepository;
+    private final VehicleService vehicleService;
+
+    public VehicleController(VehicleService vehicleService) {
+        this.vehicleService = vehicleService;
     }
 
     @GetMapping("/vehicle/{id}")
-    public String getVehicleById(@PathVariable Integer id) {
-        vehicleRepository.findById(id).get();
-        String message = "Name" +  "Id: " + id;
-        message += "Vehicle Workshop: " + vehicleRepository.findById(id).get().getWorkshop().getName();
-        return message;
+    public ResponseEntity<Vehicle> getVehicleById(@PathVariable Integer id) {
+        Vehicle vehicle = vehicleService.getVehicleById(id);
+        return (vehicle == null) ? ResponseEntity.notFound().build() : ResponseEntity.ok(vehicle);
     }
 
     @PostMapping("/vehicle")
-    public String saveVehicle(@RequestBody Vehicle vehicle) {
-        vehicleRepository.save(vehicle);
-        return "Vehicle saved successfully";
+    public ResponseEntity<String> saveVehicle(@RequestBody Vehicle vehicle) {
+        Vehicle savedVehicle = null;
+        if (vehicle.getWorkshopId() != null) {
+            savedVehicle = vehicleService.saveVehicle(vehicle, vehicle.getWorkshopId());
+            return (savedVehicle == null) ? ResponseEntity.internalServerError().body("Workshop not found") : ResponseEntity.ok("Vehicle saved successfully");
+        }
+        return ResponseEntity.badRequest().body("Missing workshop ID");
     }
 
     @PutMapping("/vehicle/{id}")
-    public String updateVehicle(@PathVariable Integer id, @RequestBody Vehicle vehicle) {
-        if (vehicleRepository.existsById(id)) {
-            vehicle.setIdVehicle(id);
-            vehicleRepository.save(vehicle);
-            return "Vehicle updated successfully";
-        } else {
-            return "Vehicle not found";
-        }
+    public ResponseEntity<String> updateVehicle(@PathVariable Integer id, @RequestBody Vehicle vehicle) {
+        Vehicle updatedVehicle = vehicleService.updateVehicle(id, vehicle);
+        return (updatedVehicle == null) ? ResponseEntity.notFound().build() : ResponseEntity.ok("Vehicle updated successfully");
     }
 
     @DeleteMapping("/vehicle/{id}")
-    public String deleteVehicle(@PathVariable Integer id) {
-        if (vehicleRepository.existsById(id)) {
-            vehicleRepository.deleteById(id);
-            return "Vehicle deleted successfully";
-        } else {
-            return "Vehicle not found";
+    public ResponseEntity<String> deleteVehicle(@PathVariable Integer id) {
+        if (vehicleService.getVehicleById(id) != null) {
+            vehicleService.deleteVehicle(id);
+            return ResponseEntity.ok("Vehicle deleted successfully");
         }
+        return ResponseEntity.notFound().build();
     }
 }

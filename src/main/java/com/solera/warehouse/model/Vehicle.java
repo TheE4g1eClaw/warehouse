@@ -12,10 +12,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 
 @Entity
 @Table(name = "vehicle")
@@ -40,4 +42,7 @@ public class Vehicle {
 
     @OneToMany(mappedBy = "vehicle")
     List<Part> parts;
+
+    @Transient
+    Integer workshopId; // This field is used to hold the workshop ID temporarily, not persisted in the database
 }

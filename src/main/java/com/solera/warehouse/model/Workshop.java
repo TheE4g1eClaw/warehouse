@@ -20,7 +20,7 @@ public class Workshop {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer idWorkshop;
     String name;
-    String descrption;
+    String description;
 
     @OneToMany(mappedBy = "workshop")
     @JsonIgnore
