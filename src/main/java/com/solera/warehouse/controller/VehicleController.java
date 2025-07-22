@@ -30,6 +30,12 @@ public class VehicleController {
         return (vehicle == null) ? ResponseEntity.notFound().build() : ResponseEntity.ok(vehicle);
     }
 
+    @GetMapping("/vehicle")
+    public ResponseEntity<Iterable<Vehicle>> getAllVehicles() {
+        Iterable<Vehicle> vehicles = vehicleService.getAllVehicles();
+        return ResponseEntity.ok(vehicles);
+    }
+
     @PostMapping("/vehicle")
     public ResponseEntity<String> saveVehicle(@RequestBody Vehicle vehicle) {
         Vehicle savedVehicle = null;

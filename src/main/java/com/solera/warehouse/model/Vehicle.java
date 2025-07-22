@@ -41,6 +41,7 @@ public class Vehicle {
     Workshop workshop;
 
     @OneToMany(mappedBy = "vehicle")
+    @JsonIgnore
     List<Part> parts;
 
     @Transient

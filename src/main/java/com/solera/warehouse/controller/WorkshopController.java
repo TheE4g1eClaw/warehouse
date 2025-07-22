@@ -69,7 +69,7 @@ public class WorkshopController {
         }
     }
 
-    @DeleteMapping("/workshop/delete/{id}")
+    @DeleteMapping("/workshop/{id}")
     public String deleteWorkshop(@PathVariable Integer id) {
         if (workshopRepository.existsById(id)) {
             workshopRepository.deleteById(id);
